@@ -1,7 +1,11 @@
-export default function home() {
+//import { useEffect } from "react";
+export default function Home() {
+  // useEffect(() => {
+  //   throw new Error("");
+  // }, []);
   return (
-    <div>
-      <h1>hello Next.js </h1>
-    </div>
+
+    <h1>인덱스페이지</h1>
+
   );
 }
