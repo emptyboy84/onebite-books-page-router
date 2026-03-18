@@ -1,35 +1,36 @@
 import BookItem from "@/components/book-item";
 import SearchbarLayout from "@/components/searchbar-layout";
-import books from "@/mock/books.json";
+import fetchBooks from "@/lib/fetch-books";
+import fetchRandomBooks from "@/lib/fetch-random-books";
 import { InferGetServerSidePropsType } from "next";
-import { ReactNode, useEffect } from "react";
+import { ReactNode } from "react";
 import style from "./index.module.css";
 
 
-export function getServerSideProps() {
-  const data = "임시데이터";
-  return { props: { data } };
+
+export async function getServerSideProps() {
+  const allBooks = await fetchBooks();
+  const randomBooks = await fetchRandomBooks();
+  return { props: { allBooks, randomBooks } };
 };
 
 
 export default function Home({
-  data, }: InferGetServerSidePropsType<typeof getServerSideProps>) {//
+  allBooks, randomBooks }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   // 홈 페이지 컴포넌트: 기본 방문 경로('/')에 렌더링되는 메인 화면입니다.
-  useEffect(() => {
-    console.log(window.history);
-  }, []);
+
   return (
     <div className={style.container}>
       <section>
         <h3>지금추천도서</h3>
         {/* books.json의 데이터를 기반으로 추천 도서 목록을 화면에 그립니다. (현재는 전체 목업 데이터를 그대로 렌더링) */}
-        {books.map((book) => (
+        {randomBooks.map((book) => (
           <BookItem key={`recommend-${book.id}`} {...book} />
         ))}
       </section>
       <section>
         <h3>등록된모든도서</h3>
-        {books.map((book) => (
+        {allBooks.map((book) => (
           <BookItem key={`all-${book.id}`} {...book} />//key는 고유한 값을 가져야합니다.   
         ))}
       </section>
