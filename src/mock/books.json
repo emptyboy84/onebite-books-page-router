@@ -1,0 +1,29 @@
+[
+   {
+      "id": 1,
+      "title": "한입크기로잘라먹는리액트I  ",
+      "subTitle": "자바스크립트부터앱배포까지",
+      "description": "자바스크립트부터앱배포까지",
+      "author": "배현직",
+      "publisher": "한빛미디어",
+      "coverImgUrl": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/9788966264841.jpg"
+   },
+   {
+      "id": 2,
+      "title": "한입크기로잘라먹는리액트II  ",
+      "subTitle": "자바스크립트부터앱배포까지",
+      "description": "자바스크립트부터앱배포까지",
+      "author": "배현직",
+      "publisher": "한빛미디어",
+      "coverImgUrl": "https://shoppingphinf.psatatic.net/main_3888828/38888282618.20230913071643.jpg"
+   },
+   {
+      "id": 3,
+      "title": "한입크기로잘라먹는리액트III  ",
+      "subTitle": "자바스크립트부터앱배포까지",
+      "description": "자바스크립트부터앱배포까지",
+      "author": "배현직",
+      "publisher": "한빛미디어",
+      "coverImgUrl": "https://shoppingphinf.psatatic.net/main_3888828/38888282618.20230913071643.jpg"
+   }
+]
