@@ -1,3 +1,6 @@
+//miniBackEnd
+//api 폴더는 api 요청을 처리하는 폴더입니다.
+
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 

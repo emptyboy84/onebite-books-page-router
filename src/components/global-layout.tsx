@@ -19,7 +19,9 @@ export default function GlobalLayout({
          </main>
 
          {/* 하단 푸터 영역 */}
-         <footer>@winterlood</footer>
+         <footer>
+            <Link href="/book/new">새로운 책 등록하기</Link>
+         </footer>
       </div>
    );
 }
