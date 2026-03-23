@@ -1,50 +1,43 @@
-import BookItem from "@/components/book-item";
-import SearchbarLayout from "@/components/searchbar-layout";
-import clientPromise from "@/lib/db"; //1. DB 연결 도구 불러오기
-import { InferGetServerSidePropsType } from "next";
-import { ReactNode } from "react";
-import style from "./index.module.css";
+import clientPromise from "@/lib/db";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {//서버에서 실행되는 함수 
+  // 1. DB에 연결해서 'books' 컬렉션의 모든 데이터를 가져옵니다.
+  const client = await clientPromise;//DB 연결
+  const db = client.db("myBookDB");//DB 선택
+
+  // 모든 책 데이터를 배열 형태로 싹 다 가져옵니다! 📚
+  const books = await db.collection("books").find().toArray();
+
+  // 프론트엔드로 보내기 전에 ObjectId를 문자열로 변환해줍니다.
+  const bookData = books.map((book) => {
+    const { _id, ...rest } = book;//_id를 제외한 나머지 속성을 rest에 할당
+    return {
+      ...rest,//스프레드 연산자: book 객체의 모든 속성을 그대로 가져옴
+      id: _id.toString(),//_id를 문자열로 변환
+      title: book.title.toString(),
+      author: book.author.toString(),
+    }
+  })
 
 
-export async function getServerSideProps() {//서버에서 실행되는 함수
-  // 2. DB에 연결해서 'books' 컬렉션의 모든 데이터를 가져옵니다.
-  const client = await clientPromise;//연결
-  const db = client.db("myBookDB");
-  const booksData = await db.collection("books").find().toArray();
 
-  // 3. Next.js 규칙에 맞게 데이터 형태를 살짝 다듬어줍니다. (MongoDB의 고유 _id를 일반 문자열 id로 변환)
-  const allBooks = booksData.map((book) => ({
-    title: book.title,
-    author: book.author,
-    id: book._id.toString(),//몽고디비의 고유 _id를 일반 문자열 id로 변환
-  }));
-  // 임시로 추천 도서에도 똑같은 데이터를 넣어볼게요.
-  return { props: { allBooks, randomBooks: allBooks } };//props는 속성이라는 뜻으로 컴포넌트에 전달할 데이터를 의미합니다.
+  return {
+    props: { books: bookData } //props로 bookData를 전달
+  }
 };
 
-
-export default function Home({
-  allBooks, randomBooks }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  //InferGetServerSidePropsType<typeof getServerSideProps>는 getServerSideProps 
-  // 함수의 반환 타입을 추론하여 allBooks와 randomBooks의 타입을 자동으로 설정해줍니다.
-  // 홈 페이지 컴포넌트: 기본 방문 경로('/')에 렌더링되는 메인 화면입니다.
-
+export default function Home({ books }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <div className={style.container}>//style.container는 global-layout.module.css에 정의된 클래스입니다.
-      <section>
-        <h3>등록된도서</h3>
-        {/* books.json의 데이터를 기반으로 추천 도서 목록을 화면에 그립니다. (현재는 전체 목업 데이터를 그대로 렌더링) */}
-        {allBooks.map((book) => (
-          <BookItem key={book.id} {...book} />//key는 고유한 값을 가져야합니다.   
+    <div style={{ padding: "20px" }}>
+      <h1>📚 내 책장 (전체 목록)</h1>
+      <ul>
+        {books.map((book) => (
+          <li key={book.id}>
+            <a href={`/book/${book.id}`}>{book.title} </a>({book.author})
+          </li>
         ))}
-      </section>
-
+      </ul>
     </div>
   );
-}
-
-// getLayout을 통해 Home 컴포넌트에만 적용될 특별한 레이아웃을 정의합니다.
-// 이 설정 덕분에 _app.tsx에서 컴포넌트를 이 레이아웃(SearchbarLayout)으로 감쌀 수 있습니다.
-Home.getLayout = (page: ReactNode) => {
-  return <SearchbarLayout>{page}</SearchbarLayout>;
-}
+};

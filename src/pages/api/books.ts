@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
          // 2. 'myBookDB'라는 이름의 데이터베이스 창고를 선택합니다.
          const db = client.db("myBookDB");
          // 3. 'books' 컬렉션(테이블(서랍))에 제목과저자를 삽입(insert)합니다.
-         await db.collection("books").find().toArray();
+         await db.collection("books").insertOne({ title, author });//insertOne는 몽고디비에서 데이터를 삽입하는 함수입니다.
          // 성공적으로 저장했다고 프론트엔드에 알려줍니다.
          //// 성공적으로 저장했다고 프론트엔드에 알려줍니다.
          res.status(200).json({ message: "책이 성공적으로 등록되었습니다." });
