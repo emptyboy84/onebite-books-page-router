@@ -1,6 +1,6 @@
 import BookItem from "@/components/book-item"; //@는 src 폴더를 의미합니다. 
 import SearchbarLayout from "@/components/searchbar-layout";
-import books from "@/mock/books.json";
+import books from "@/mock/book.json";
 import { ReactNode } from "react";
 
 export default function Page() {
