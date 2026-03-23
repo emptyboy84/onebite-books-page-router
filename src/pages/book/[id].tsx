@@ -1,6 +1,7 @@
 import clientPromise from "@/lib/db"; //1. DB 연결 도구 불러오기
+import { BookData } from "@/types";
 import { ObjectId } from "mongodb"; //ObjectId 도구 불러오기
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { GetServerSidePropsContext } from "next";
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {//서버에서 실행되는 함수 
@@ -43,7 +44,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {//
    }
 };
 
-export default function Page({ book }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Page({ book }: { book: BookData }) {
    return (
       <div>
          <h1>{book.title}</h1>
