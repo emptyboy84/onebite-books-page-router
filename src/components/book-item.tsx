@@ -8,7 +8,7 @@ export default function BookItem({ id, title, subTitle, author, publisher, cover
    return (
       // Link 태그를 활용하여 클릭 시 `/books/1`, `/books/2` 형태의 상세 페이지로 이동하도록 설정합니다.
       <Link href={`/book/${id}`} className={style.searchbar_container}>
-         <img src={coverImgUrl} />
+         {/* <img src={coverImgUrl} /> */}
          <div>
             <div className={style.title}>{title}</div>
             <div className={style.subTitle}>{subTitle}</div>
