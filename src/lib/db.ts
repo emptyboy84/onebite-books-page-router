@@ -1,3 +1,4 @@
+/* MongoDB 연결을 관리하는 유틸리티. 개발 환경에서는 핫리로드 시 연결을 재사용(globalThis 캐싱)하고, 운영 환경에서는 매번 새로 연결합니다. */
 import { MongoClient } from "mongodb";
 
 const uri = process.env.MONGODB_URI as string;//.env.local에 적은 주소를가져온다 as string은 문자열로 변환하라는 뜻
@@ -28,6 +29,11 @@ if (process.env.NODE_ENV === "development") {//개발환경에서는 연결을 �
 
    client = new MongoClient(uri, options);
    clientPromise = client.connect();
+
+}
+export async function getMyBookDB() {
+  const client = await clientPromise;
+  return client.db("myBookDB");
 }
 
-export default clientPromise;
+export default clientPromise;//db연결을 위한 promise를 내보낸다

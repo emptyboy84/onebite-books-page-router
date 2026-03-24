@@ -1,3 +1,4 @@
+/* /create 경로의 책 생성 페이지 (미완성). new.tsx와 유사한 역할이며 현재 작성 중인 파일입니다. */
 import { useRouter } from "next/router";
 import { useState } from "react";
 

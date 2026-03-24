@@ -1,3 +1,4 @@
+/* 검색창이 포함된 레이아웃 컴포넌트. 검색 페이지 등 특정 페이지에만 선택적으로 GlobalLayout 안에 감싸서 사용합니다. */
 import { useRouter } from "next/router";
 import { ChangeEvent, ReactNode, useEffect, useState } from "react";
 import style from "./searchbar-layout.module.css";

@@ -1,3 +1,4 @@
+/* 책 한 권의 정보를 카드 형태로 보여주는 공통 컴포넌트. 클릭 시 해당 책 상세 페이지(/book/[id])로 이동합니다. */
 import { BookData } from "@/types";
 import Link from "next/link";
 import style from "./book-item.module.css";

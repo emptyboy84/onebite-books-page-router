@@ -1,3 +1,4 @@
+/* 앱 전체에 적용되는 전역 CSS. _app.tsx에서 단 한 번 import하며, 기본 margin/padding 초기화 등을 담당합니다. */
 html,
 body {
    margin: 0;

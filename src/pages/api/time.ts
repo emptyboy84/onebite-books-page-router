@@ -1,3 +1,4 @@
+/* GET /api/time 요청에 현재 서버 시간을 JSON으로 반환하는 API 테스트 핸들러. */
 import type { NextApiRequest, NextApiResponse } from "next";
 
 

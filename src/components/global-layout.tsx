@@ -1,3 +1,4 @@
+/* 모든 페이지에 공통으로 적용되는 최상위 레이아웃. 상단 헤더(로고)와 하단 푸터(책 등록 링크)를 포함합니다. */
 import Link from "next/link";
 import { ReactNode } from "react";
 import style from "./global-layout.module.css";

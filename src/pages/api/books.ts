@@ -1,43 +1,63 @@
-/*확장자 (.ts vs .tsx): API 파일은 사용자에게 보여줄 화면(UI)을 그리는 
-곳이 아니라 데이터만 처리하는 곳입니다. 그래서 화면을 그리는 
-기능이 들어간 .tsx 대신, 순수하게 코드만 적는 .ts 확장자를 사용합니다*/
-import clientPromise from "@/lib/db"; //// 방금 만든 DB 연결 도구를 수입(import)해 옵니다!
+/**
+ * [API] /api/books
+ *
+ * GET  → MongoDB 'books' 컬렉션의 전체 책 목록을 반환합니다.
+ * POST → 요청 body의 { title, author } 데이터를 books 컬렉션에 저장합니다.
+ *
+ * ※ _id(ObjectId) 는 JSON으로 직접 직렬화하면 오류가 나기 때문에
+ *    문자열 id 로 변환한 뒤 응답합니다.
+ */
+
+import clientPromise from "@/lib/db";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-   // 프론트엔드에서 데이터(POST 요청)를 보냈을 때만 처리합니다.
 
-   if (req.method === 'POST') {  // 요청 방식이 POST(생성)인지 확인합니다.
-
-      // req.body 안에 우리가 화면에서 보낸 title, author 데이터가 들어옵니다!
+   // ── GET: 전체 책 목록 조회 ──────────────────────────────────────────
+   if (req.method === "GET") {
       try {
-         // 1. 대기시켜둔 DB 연결 통로를 엽니다.
          const client = await clientPromise;
-         // 2. 'myBookDB'라는 이름의 데이터베이스 창고를 선택합니다.
-         const db = client.db("");// 몽고디비 연결
+         const db = client.db("myBookDB");
 
-         // 사용자가 폼에 입력한 제목과 저자 정보
-         const { title, author } = req.body;
+         const rawBooks = await db.collection("books").find().toArray();
 
-         // 3. 'books' 컬렉션(테이블(서랍))에 제목과저자를 삽입(insert)합니다.
-         await db.collection("books").insertOne({ title, author });//insertOne는 몽고디비에서 데이터를 삽입하는 함수입니다.
-         // 성공적으로 저장했다고 프론트엔드에 알려줍니다.
-         res.status(200).json({ sucess: true, message: "책이 성공적으로 등록되었습니다." });
+         // ObjectId(_id) → 문자열(id) 로 변환해서 반환
+         const books = rawBooks.map(({ _id, ...rest }) => ({
+            ...rest,
+            id: _id.toString(),
+         }));
 
-         // 성공적으로 저장했다고 화면 쪽에 알려줍니다.
-         console.log("서버에도착한데이터", title, author);
-
-         // 나중에는 여기서 데이터베이스(DB)에 데이터를 저장하는 코드가 들어갑니다.
-         // 지금은 일단 성공했다는 응답만 보냅니다.
-         // 프론트엔드에 "성공적으로 잘 받았어!"라고 응답(200 OK)을 보냅니다.
+         return res.status(200).json(books);
       } catch (err) {
-         // 만약 에러가 나면 500(서버 에러) 상태 코드를 보냅니다.
-         res.status(500).json({ success: false, message: "디비저장중 에 러가 발생했습니다." });
-         // 에러가 발생했음을 콘솔에 기록합니다.
-         console.error("", err);
+         console.error("전체 조회 오류:", err);
+         return res.status(500).json({ success: false, message: "전체 목록 조회 중 오류가 발생했습니다." });
       }
-   } else {
-      res.status(405).json({ message: "허용되지 않는 메서드입니다." });
    }
+
+   // ── POST: 새 책 등록 ────────────────────────────────────────────────
+   if (req.method === "POST") {
+      const { title, author } = req.body;
+
+      // 필수 값 검증
+      if (!title || !author) {
+         return res.status(400).json({ success: false, message: "제목과 저자는 필수 입력값입니다." });
+      }
+
+      try {
+         const client = await clientPromise;
+         const db = client.db("myBookDB");
+
+         // books 컬렉션에 새 책을 삽입하고 생성된 문서 ID를 응답으로 돌려줍니다
+         const result = await db.collection("books").insertOne({ title, author });
+
+         console.log("등록된 책:", title, author);
+         return res.status(201).json({ success: true, id: result.insertedId.toString() });
+      } catch (err) {
+         console.error("등록 오류:", err);
+         return res.status(500).json({ success: false, message: "책 등록 중 오류가 발생했습니다." });
+      }
+   }
+
+   // ── 그 외 메서드 ────────────────────────────────────────────────────
+   res.status(405).json({ message: "허용되지 않는 메서드입니다." });
 }

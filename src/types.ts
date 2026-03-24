@@ -1,13 +1,12 @@
+/* 프로젝트 전체에서 공통으로 사용하는 TypeScript 타입(인터페이스) 정의 파일. */
 export interface BookData {
    id: string | number;
    title: string;
-   /*선택적 프로퍼티(Optional Property) 라고 부르는 아주 유용한 문법입니다. 
-   "이 데이터는 있을 수도 있고 없을 수도 있어(필수가 아니야)"라고 컴퓨터에게 미리 알려주는 유연한 방패 역할을 하죠. 🛡️*/
-   subTitle?: string;
+   // 선택적 필드(Optional): DB에 해당 값이 없으면 null로 들어옵니다.
+   // getServerSideProps에서 undefined는 직렬화 불가 → null로 변환하므로 타입도 null 허용
+   subTitle?: string | null;
    author: string;
-   //선택적 프로퍼티(Optional Property) 라고 부르는 아주 유용한 문법입니다. 
-   publisher?: string;
-   coverImgUrl?: string;
-   description?: string;
-
+   publisher?: string | null;
+   coverImgUrl?: string | null;
+   description?: string | null;
 }
