@@ -8,28 +8,36 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
    // 프론트엔드에서 데이터(POST 요청)를 보냈을 때만 처리합니다.
 
-   if (req.method === 'POST') {
+   if (req.method === 'POST') {  // 요청 방식이 POST(생성)인지 확인합니다.
+
       // req.body 안에 우리가 화면에서 보낸 title, author 데이터가 들어옵니다!
-      const { title, author } = req.body;
       try {
          // 1. 대기시켜둔 DB 연결 통로를 엽니다.
          const client = await clientPromise;
          // 2. 'myBookDB'라는 이름의 데이터베이스 창고를 선택합니다.
-         const db = client.db("myBookDB");
+         const db = client.db("");// 몽고디비 연결
+
+         // 사용자가 폼에 입력한 제목과 저자 정보
+         const { title, author } = req.body;
+
          // 3. 'books' 컬렉션(테이블(서랍))에 제목과저자를 삽입(insert)합니다.
          await db.collection("books").insertOne({ title, author });//insertOne는 몽고디비에서 데이터를 삽입하는 함수입니다.
          // 성공적으로 저장했다고 프론트엔드에 알려줍니다.
-         //// 성공적으로 저장했다고 프론트엔드에 알려줍니다.
-         res.status(200).json({ message: "책이 성공적으로 등록되었습니다." });
+         res.status(200).json({ sucess: true, message: "책이 성공적으로 등록되었습니다." });
 
+         // 성공적으로 저장했다고 화면 쪽에 알려줍니다.
          console.log("서버에도착한데이터", title, author);
+
          // 나중에는 여기서 데이터베이스(DB)에 데이터를 저장하는 코드가 들어갑니다.
          // 지금은 일단 성공했다는 응답만 보냅니다.
          // 프론트엔드에 "성공적으로 잘 받았어!"라고 응답(200 OK)을 보냅니다.
       } catch (err) {
          // 만약 에러가 나면 500(서버 에러) 상태 코드를 보냅니다.
-         res.status(500).json({ message: "디비저장중 에러가 발생했습니다." });
+         res.status(500).json({ success: false, message: "디비저장중 에 러가 발생했습니다." });
+         // 에러가 발생했음을 콘솔에 기록합니다.
          console.error("", err);
       }
+   } else {
+      res.status(405).json({ message: "허용되지 않는 메서드입니다." });
    }
 }
