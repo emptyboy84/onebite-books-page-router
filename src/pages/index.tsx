@@ -8,10 +8,12 @@
  *   MongoDB → getServerSideProps → props.books → Home 컴포넌트 → BookItem
  */
 import BookItem from "@/components/book-item";
+import SearchbarLayout from "@/components/searchbar-layout";
 import clientPromise from "@/lib/db";
 import { BookData } from "@/types";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Link from "next/link";
+import { ReactNode } from "react";
 
 export async function getServerSideProps(_context: GetServerSidePropsContext) {
    // 1. DB에 연결합니다 (clientPromise는 lib/db.ts에서 싱글턴으로 관리)
@@ -60,3 +62,9 @@ export default function Home({ books }: InferGetServerSidePropsType<typeof getSe
       </div>
    );
 }
+
+// GlobalLayout 위에 SearchbarLayout을 추가로 감쌉니다
+// 홈에서도 검색창을 사용할 수 있도록 설정합니다
+Home.getLayout = (page: ReactNode) => {
+   return <SearchbarLayout>{page}</SearchbarLayout>;
+};
