@@ -21,7 +21,6 @@ export default function GlobalLayout({
 
          {/* 하단 푸터 영역 */}
          <footer>
-            <Link href="/book/new">새로운 책 등록하기</Link>
          </footer>
       </div>
    );
