@@ -16,6 +16,7 @@ export default function GlobalLayout({
 
          {/* 메인 컨텐츠 영역: _app.tsx에서 전달한 <Component {...pageProps} />가 여기에 나타납니다. */}
          <main>
+
             {children}
          </main>
 

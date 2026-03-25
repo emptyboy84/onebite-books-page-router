@@ -7,3 +7,67 @@
 .container h3 {
    margin-bottom: 0px;
 }
+
+.tableContainer {
+   width: 100%;
+   border-radius: 8px;
+   overflow: hidden;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+   border: 1px solid #eaeaea;
+   background: #fff;
+}
+
+.table {
+   width: 100%;
+   border-collapse: collapse;
+   text-align: left;
+}
+
+.table th {
+   background-color: #f8f9fa;
+   padding: 12px 16px;
+   font-weight: 600;
+   color: #333;
+   border-bottom: 2px solid #eaeaea;
+}
+
+.table td {
+   padding: 12px 16px;
+   border-bottom: 1px solid #f0f0f0;
+   vertical-align: middle;
+}
+
+.table tr:last-child td {
+   border-bottom: none;
+}
+
+.row {
+   cursor: pointer;
+   transition: background-color 0.2s ease;
+}
+
+.row:hover {
+   background-color: #f1f5f9;
+}
+
+.coverImg {
+   width: 60px;
+   height: 85px;
+   object-fit: cover;
+   border-radius: 4px;
+   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.bookTitle {
+   font-weight: bold;
+   color: #111;
+   font-size: 1.05rem;
+   margin-bottom: 4px;
+   display: block;
+}
+
+.bookSubtitle {
+   font-size: 0.85rem;
+   color: #666;
+   display: block;
+}

@@ -22,14 +22,23 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       const client = await clientPromise;
       const db = client.db("myBookDB");
 
-      // $regex: 검색어 포함 여부 / $options "i": 대소문자 무시
-      // 제목(title) 또는 저자(author) 중 하나라도 포함되면 결과에 포함합니다
-      const rawBooks = await db.collection("books").find({
-         $or: [
-            { title: { $regex: q, $options: "i" } },
-            { author: { $regex: q, $options: "i" } },
-         ],
-      }).toArray();
+      let rawBooks: any[] = [];
+      if (q) {
+         const matchedBooks = await db.collection("books").find({
+            $or: [
+               { title: { $regex: q, $options: "i" } },
+               { author: { $regex: q, $options: "i" } },
+            ],
+         }).toArray();
+
+         const matchedAuthors = Array.from(new Set(matchedBooks.map(b => b.author).filter(Boolean)));
+
+         if (matchedAuthors.length > 0) {
+            rawBooks = await db.collection("books").find({
+               author: { $in: matchedAuthors }
+            }).toArray();
+         }
+      }
 
       // ObjectId(_id) → 문자열(id) 직렬화
       const books: BookData[] = rawBooks.map(({ _id, ...rest }) => ({
