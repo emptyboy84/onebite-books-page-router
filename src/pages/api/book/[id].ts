@@ -12,9 +12,10 @@ import clientPromise from "@/lib/db";
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) { //id와 q를 받음
    // URL에서 [id] 파라미터를 꺼냅니다 (예: /api/book/abc123)
    const { id } = req.query;
+   const q = req.query.q;//
 
    // id 유효성 검증 (없거나 배열이면 거부)
    if (!id || typeof id !== "string") {

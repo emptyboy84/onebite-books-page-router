@@ -15,17 +15,18 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Link from "next/link";
 import { ReactNode } from "react";
 
-export async function getServerSideProps(_context: GetServerSidePropsContext) {
+export async function getServerSideProps(context: GetServerSidePropsContext) { //q를 받음
+   const q = context.query.q as string || "";  // 1. 주소창에서 검색어(q) 꺼내기 (검색어가 없으면 빈 문자열)
    // 1. DB에 연결합니다 (clientPromise는 lib/db.ts에서 싱글턴으로 관리)
    const client = await clientPromise;
-   const db = client.db("myBookDB");
+   const db = client.db("myBookDB");//myBookDB 데이터베이스 연결
 
-   // 2. books 컬렉션의 모든 문서를 배열로 가져옵니다
-   const rawBooks = await db.collection("books").find().toArray();
+   // 3. 핵심 검색 로직 ($regex 사용)
+   // 저자가 쓴 책이 2권 이상이어도 find()가 모두 배열로 찾아옵니다.
+   const DupleBooks = q ? await db.collection("books").find({ author: { $regex: q } }).toArray() : await db.collection("books").find({}).toArray();
+   //q가 있으면 검색, 없으면 전체
 
-   // 3. MongoDB의 ObjectId(_id)는 JSON 직렬화가 안 되므로 문자열 id로 변환합니다
-   //    _app.tsx를 통해 props가 클라이언트로 전달될 때 직렬화 오류가 나지 않도록 꼭 필요합니다
-   const books: BookData[] = rawBooks.map(({ _id, ...rest }) => ({
+   const books: BookData[] = DupleBooks.map(({ _id, ...rest }) => ({
       id: _id.toString(),            // ObjectId → string
       title: rest.title ?? "",
       author: rest.author ?? "",
@@ -33,14 +34,19 @@ export async function getServerSideProps(_context: GetServerSidePropsContext) {
       // Next.js getServerSideProps는 undefined를 JSON 직렬화할 수 없기 때문입니다.
       subTitle: rest.subTitle ?? null,
       publisher: rest.publisher ?? null,
-      coverImgUrl: rest.coverImgUrl ?? null,
+      coverImgUrl: rest.coverImgUrl ?? null, //
       description: rest.description ?? null,
    }));
+   // 4. 프론트엔드로 전달 (ObjectId 에러 방지를 위해 변환)
 
-   return { props: { books } };
+   return {
+      props: {
+         DupleBooks: JSON.parse(JSON.stringify(DupleBooks)) //ObjectId를 문자열로 변환
+      }
+   };
 }
 
-export default function Home({ books }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({ DupleBooks }: InferGetServerSidePropsType<typeof getServerSideProps>) {
    return (
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "20px 16px" }}>
          {/* 페이지 헤더 */}
@@ -53,11 +59,11 @@ export default function Home({ books }: InferGetServerSidePropsType<typeof getSe
          </div>
 
          {/* 책이 한 권도 없을 때 안내 문구 */}
-         {books.length === 0 ? (
+         {DupleBooks.length === 0 ? (
             <p style={{ color: "gray" }}>등록된 책이 없습니다. 위의 버튼으로 추가해보세요!</p>
          ) : (
             // BookItem 컴포넌트에 책 데이터를 스프레드 연산자로 전달합니다
-            books.map((book) => <BookItem key={book.id} {...book} />)
+            DupleBooks.map((book: BookData) => <BookItem key={book.id} {...book} />)
          )}
       </div>
    );

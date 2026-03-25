@@ -20,6 +20,7 @@ import { useState } from "react";
 export async function getServerSideProps(context: GetServerSidePropsContext) {
    const id = context.params?.id;
 
+
    // id가 없거나 문자열이 아니면 404 페이지를 반환합니다
    if (!id || typeof id !== "string") return { notFound: true };
 
